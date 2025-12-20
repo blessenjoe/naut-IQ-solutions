@@ -1,3 +1,67 @@
+// Video Fade to Black Loop Handler
+function setupFadeToBlackLoop(video, videoContainer) {
+    // Create fade overlay
+    const fadeOverlay = document.createElement('div');
+    fadeOverlay.className = 'video-fade-overlay';
+    videoContainer.appendChild(fadeOverlay);
+
+    video.addEventListener('loadedmetadata', function() {
+        const videoDuration = video.duration;
+        const fadeStartTime = videoDuration - 1.5; // Start fading 1.5 seconds before end
+
+        video.addEventListener('timeupdate', function() {
+            // Fade to black near the end
+            if (video.currentTime >= fadeStartTime) {
+                fadeOverlay.classList.add('active');
+            } else {
+                fadeOverlay.classList.remove('active');
+            }
+        });
+
+        // Reset fade when video loops
+        video.addEventListener('seeked', function() {
+            if (video.currentTime < 1) {
+                fadeOverlay.classList.remove('active');
+            }
+        });
+    });
+}
+
+// Splash Screen Animation
+document.addEventListener('DOMContentLoaded', function() {
+    const splashScreen = document.getElementById('splash-screen');
+    const splashTitle = document.getElementById('splash-title');
+    const navbar = document.querySelector('.navbar');
+    const splashVideo = document.getElementById('splash-video');
+    const heroVideo = document.getElementById('hero-video');
+    const heroSection = document.querySelector('.hero');
+
+    // Setup fade to black looping for both videos
+    setupFadeToBlackLoop(splashVideo, splashScreen);
+    setupFadeToBlackLoop(heroVideo, heroSection);
+
+    // Show splash screen animation every time
+    setTimeout(() => {
+        // Start move-to-nav animation after 2 seconds (after fade-in)
+        splashTitle.classList.add('animate-to-nav');
+
+        // Show navbar at the end of the animation for seamless transition
+        setTimeout(() => {
+            navbar.classList.add('visible');
+        }, 1000); // Show navbar when splash title reaches nav position
+    }, 2000);
+
+    setTimeout(() => {
+        // Hide splash screen after animation completes
+        splashScreen.classList.add('hidden');
+
+        // Remove splash screen from DOM after transition
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+        }, 800);
+    }, 3800);
+});
+
 // Mobile Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.querySelector('.hamburger');
@@ -49,9 +113,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(44, 62, 80, 0.98)';
+        navbar.style.background = 'rgba(0, 0, 0, 0.3)';
     } else {
-        navbar.style.background = 'rgba(44, 62, 80, 0.95)';
+        navbar.style.background = 'transparent';
     }
 });
 
