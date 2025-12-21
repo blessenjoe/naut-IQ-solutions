@@ -112,11 +112,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Navbar Background Change on Scroll
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(0, 0, 0, 0.3)';
-    } else {
-        navbar.style.background = 'transparent';
-    }
+    // Keep navbar fully transparent at all times
+    navbar.style.background = 'transparent';
 });
 
 // Contact Form Handler
