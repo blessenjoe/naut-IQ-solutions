@@ -140,8 +140,12 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
         return;
     }
     
-    // Simulate form submission (replace with actual form handling)
-    alert('Thank you for your message! We\'ll get back to you soon.');
+    // Build mailto link with form data
+    const recipient = 'info@nautiqsolutions.com';
+    const subject = encodeURIComponent(`Contact from ${name}${company ? ` (${company})` : ''}`);
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCompany: ${company || 'N/A'}\n\nMessage:\n${message}`);
+
+    window.open(`mailto:${recipient}?subject=${subject}&body=${body}`, '_blank');
     this.reset();
 });
 
