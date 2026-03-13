@@ -334,11 +334,10 @@ html {
     border-radius: 2px;
 }
 
-.about-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 3rem;
-    align-items: center;
+.about-text {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .about-text p {
@@ -348,20 +347,51 @@ html {
     line-height: 1.8;
 }
 
-.about-visual {
-    display: flex;
-    justify-content: center;
-}
-
 .compass-icon {
-    font-size: 6rem;
+    font-size: 2.5rem;
     color: #3498db;
-    animation: rotate 10s linear infinite;
+    vertical-align: middle;
+    margin-right: 0.5rem;
 }
 
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+/* Vision, Mission, Values */
+.vmv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.vmv-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.vmv-card:hover {
+    transform: translateY(-5px);
+}
+
+.vmv-card h3 {
+    font-size: 1.4rem;
+    color: #14253F;
+    margin-bottom: 1rem;
+}
+
+.vmv-card p {
+    font-size: 1rem;
+    color: #34495e;
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .vmv-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Offerings Section */
@@ -390,54 +420,197 @@ html {
     border-radius: 2px;
 }
 
-.services-grid {
+/* Offerings Two-Column Layout */
+.offerings-content {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    align-items: stretch;
 }
 
-.service-card {
+.offerings-index {
     background: white;
     padding: 2rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    height: 600px;
+    overflow-y: auto;
+    position: sticky;
+    top: 150px;
+}
+
+.offerings-index::-webkit-scrollbar {
+    width: 8px;
+}
+
+.offerings-index::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.offerings-index::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 10px;
+}
+
+.offerings-index::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}
+
+.index-list {
+    list-style: none;
+}
+
+.index-list li {
+    margin-bottom: 1.5rem;
+}
+
+.index-list li:last-child {
+    margin-bottom: 0;
+}
+
+.index-item {
+    color: #34495e;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem 1rem;
+    border-radius: 8px;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    border-left: 4px solid transparent;
+    background: #f9f9f9;
 }
 
-.service-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(45deg, #3498db, #2980b9);
-}
-
-.service-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.service-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    display: block;
-}
-
-.service-card h3 {
+.index-item strong {
+    font-size: 1rem;
     color: #2c3e50;
-    margin-bottom: 1rem;
-    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.index-description {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    line-height: 1.4;
+}
+
+.index-item:hover {
+    background: #f0f7ff;
+    border-left-color: #3498db;
+}
+
+.index-item:hover strong {
+    color: #3498db;
+}
+
+.index-item.active {
+    background: #e3f2fd;
+    border-left-color: #3498db;
+}
+
+.index-item.active strong {
+    color: #3498db;
+}
+
+/* Service Detail Card */
+.offerings-detail {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-detail-card {
+    padding: 3rem;
+    animation: fadeIn 0.4s ease;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.service-detail-card h3 {
+    color: #2c3e50;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.category-services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.service-item {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.service-item:hover {
+    border-color: #3498db;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+    transform: translateY(-2px);
+}
+
+.service-item-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.service-item h4 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
 }
 
-.service-card p {
-    color: #7f8c8d;
+.service-item p {
+    color: #34495e;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.service-item ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.service-item li {
+    color: #34495e;
+    font-size: 0.9rem;
     line-height: 1.6;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.service-item li:last-child {
+    margin-bottom: 0;
+}
+
+.service-item li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #3498db;
+    font-weight: bold;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Contact Section */
@@ -613,6 +786,21 @@ html {
         grid-template-columns: 1fr;
     }
 
+    .offerings-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .offerings-index {
+        position: static;
+        top: auto;
+        height: auto;
+    }
+
+    .category-services-grid {
+        grid-template-columns: 1fr;
+    }
+
     .container {
         padding: 0 1rem;
     }
@@ -633,11 +821,15 @@ html {
         font-size: 2rem;
     }
 
-    .services-grid {
+    .offerings-content {
         grid-template-columns: 1fr;
     }
 
-    .service-card {
+    .service-detail-card {
+        padding: 1.5rem;
+    }
+
+    .offerings-index {
         padding: 1.5rem;
     }
 

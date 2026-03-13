@@ -211,3 +211,123 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Offerings Interactive Category View
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryData = {
+        audits: {
+            title: 'Shipboard Audits',
+            services: [
+                {
+                    icon: '📋',
+                    title: 'Internal ISM, ISPS & MLC Audits',
+                    description: '<ul><li>Independent audits conducted in accordance with the ISM Code</li><li>Verify compliance with safety management, security, and crew welfare requirements</li><li>Identify gaps between procedures and actual onboard practices</li><li>Help shore management strengthen compliance and operational reliability</li></ul>'
+                },
+                {
+                    icon: '🧭',
+                    title: 'Navigational Audits',
+                    description: '<ul><li>Cover both static and dynamic assessments aligned with SIRE 2.0 standards</li><li>Static reviews examine voyage planning and documentation</li><li>Dynamic audits assess bridge team performance and risk management during live operations</li></ul>'
+                },
+                {
+                    icon: '📦',
+                    title: 'Cargo & Mooring Audits',
+                    description: '<ul><li>Evaluate cargo handling practices and mooring operations</li><li>Aligned with SIRE 2.0 and industry best practices</li><li>Identify operational risks and ensure procedural compliance</li><li>Enhance safety during critical deck operations</li></ul>'
+                },
+                {
+                    icon: '📊',
+                    title: 'VDR Analysis Audit',
+                    description: '<ul><li>Examine Voyage Data Recorder recorded data</li><li>Validate bridge procedures and identify behavioural patterns</li><li>Turn raw data into actionable safety insights</li></ul>'
+                }
+            ]
+        },
+        inspections: {
+            title: 'Shipboard Inspections',
+            services: [
+                {
+                    icon: '🔍',
+                    title: 'Pre-AMSA Inspections',
+                    description: '<ul><li>Prepare your vessel for Australian Maritime Safety Authority inspections</li><li>Identify compliance gaps before inspection</li></ul>'
+                },
+                {
+                    icon: '🔍',
+                    title: 'Pre-Vetting Inspections',
+                    description: '<ul><li>Independent inspections to prepare vessels for oil major and chemical industry vetting programmes such as SIRE and CDI</li><li>Identify operational gaps and documentation issues</li><li>Address onboard practices that could affect vetting outcomes</li></ul>'
+                },
+                {
+                    icon: '🔍',
+                    title: 'Pre-Hire Inspections',
+                    description: '<ul><li>Thorough assessment of vessel condition and operational readiness</li><li>Ensure charterer hire inspection readiness</li></ul>'
+                },
+                {
+                    icon: '🔍',
+                    title: 'Pre-Sale Inspections',
+                    description: '<ul><li>Detailed technical inspection supporting vessel sale</li><li>Comprehensive condition documentation</li></ul>'
+                },
+                {
+                    icon: '🔍',
+                    title: 'Pre-Purchase Inspections',
+                    description: '<ul><li>Due diligence assessment for vessel acquisition</li><li>Identify technical status and regulatory compliance</li></ul>'
+                }
+            ]
+        },
+        risk: {
+            title: 'Risk Management',
+            services: [
+                {
+                    icon: '⚠️',
+                    title: 'Incident Investigation & Root Cause Analysis',
+                    description: '<ul><li>Professional investigation of maritime incidents</li><li>Root cause analysis and corrective action plans</li></ul>'
+                },
+                {
+                    icon: '⚠️',
+                    title: 'Safety Risk Assessments',
+                    description: '<ul><li>Proactive identification and evaluation of safety risks</li><li>Assessment across vessel operations with prioritization</li></ul>'
+                }
+            ]
+        }
+    };
+
+    const indexItems = document.querySelectorAll('.index-item');
+    const categoryTitle = document.getElementById('category-title');
+    const categoryServices = document.getElementById('category-services');
+
+    function renderCategory(categoryKey) {
+        const category = categoryData[categoryKey];
+        if (!category) return;
+
+        categoryTitle.textContent = category.title;
+        categoryServices.innerHTML = '';
+
+        category.services.forEach(service => {
+            const serviceDiv = document.createElement('div');
+            serviceDiv.className = 'service-item';
+            serviceDiv.innerHTML = `
+                <div class="service-item-icon">${service.icon}</div>
+                <h4>${service.title}</h4>
+                <p>${service.description}</p>
+            `;
+            categoryServices.appendChild(serviceDiv);
+        });
+    }
+
+    // Set first item as active and render default category
+    if (indexItems.length > 0) {
+        indexItems[0].classList.add('active');
+        renderCategory('audits');
+    }
+
+    indexItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const categoryKey = this.getAttribute('data-category');
+
+            // Update active state
+            indexItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+
+            // Render category
+            renderCategory(categoryKey);
+        });
+    });
+});
