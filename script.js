@@ -27,7 +27,7 @@ function setupFadeToBlackLoop(video, videoContainer) {
     });
 }
 
-// Splash Screen Animation
+// Splash Screen Animation (Home page only — other pages have no splash markup)
 document.addEventListener('DOMContentLoaded', function() {
     const splashScreen = document.getElementById('splash-screen');
     const splashTitle = document.getElementById('splash-title');
@@ -36,9 +36,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const heroVideo = document.getElementById('hero-video');
     const heroSection = document.querySelector('.hero');
 
+    if (!splashScreen || !splashTitle || !navbar || !splashVideo) {
+        // No splash on this page — just make sure the navbar is visible.
+        if (navbar) {
+            navbar.classList.add('visible');
+        }
+        return;
+    }
+
     // Setup fade to black looping for both videos
     setupFadeToBlackLoop(splashVideo, splashScreen);
-    setupFadeToBlackLoop(heroVideo, heroSection);
+    if (heroVideo && heroSection) {
+        setupFadeToBlackLoop(heroVideo, heroSection);
+    }
 
     // Show splash screen animation every time
     setTimeout(() => {
@@ -109,45 +119,40 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar Background Change on Scroll
-window.addEventListener('scroll', function() {
-    const navbar = document.querySelector('.navbar');
-    // Keep navbar fully transparent at all times
-    navbar.style.background = 'transparent';
-});
+// Contact Form Handler (only present on contact.html)
+const contactForm = document.querySelector('.contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-// Contact Form Handler
-document.querySelector('.contact-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(this);
-    const name = this.querySelector('input[placeholder="Your Name"]').value;
-    const email = this.querySelector('input[placeholder="Your Email"]').value;
-    const company = this.querySelector('input[placeholder="Company"]').value;
-    const message = this.querySelector('textarea').value;
-    
-    // Basic validation
-    if (!name || !email || !message) {
-        alert('Please fill in all required fields.');
-        return;
-    }
-    
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
-        return;
-    }
-    
-    // Build mailto link with form data
-    const recipient = 'info@nautiqsolutions.com';
-    const subject = encodeURIComponent(`Contact from ${name}${company ? ` (${company})` : ''}`);
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCompany: ${company || 'N/A'}\n\nMessage:\n${message}`);
+        // Get form data
+        const name = this.querySelector('input[placeholder="Your Name"]').value;
+        const email = this.querySelector('input[placeholder="Your Email"]').value;
+        const company = this.querySelector('input[placeholder="Company"]').value;
+        const message = this.querySelector('textarea').value;
 
-    window.open(`mailto:${recipient}?subject=${subject}&body=${body}`, '_blank');
-    this.reset();
-});
+        // Basic validation
+        if (!name || !email || !message) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        // Build mailto link with form data
+        const recipient = 'info@nautiqsolutions.com';
+        const subject = encodeURIComponent(`Contact from ${name}${company ? ` (${company})` : ''}`);
+        const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCompany: ${company || 'N/A'}\n\nMessage:\n${message}`);
+
+        window.open(`mailto:${recipient}?subject=${subject}&body=${body}`, '_blank');
+        this.reset();
+    });
+}
 
 // Intersection Observer for Fade In Animations
 const observerOptions = {
@@ -176,22 +181,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Active Navigation Link Highlighting
+// Active Navigation Link Highlighting (single-page scroll spy)
 window.addEventListener('scroll', function() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     let currentSection = '';
-    
+
     sections.forEach(section => {
         const sectionTop = section.getBoundingClientRect().top;
         const sectionHeight = section.offsetHeight;
-        
+
         if (sectionTop <= 100 && sectionTop + sectionHeight > 100) {
             currentSection = section.getAttribute('id');
         }
     });
-    
+
     navLinks.forEach(link => {
         link.classList.remove('active');
         if (link.getAttribute('href') === `#${currentSection}`) {
@@ -331,3 +336,197 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Footer year
+document.addEventListener('DOMContentLoaded', function() {
+    const yearEl = document.getElementById('year');
+    if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+    }
+});
+
+// =====================================================
+// Interactive additions: timeline, stat strip, coverage map
+// =====================================================
+(function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasAnime = typeof anime !== 'undefined';
+
+    // ---------- Timeline reveal ----------
+    (function () {
+        const track = document.getElementById('timeline-track');
+        if (!track) return;
+        const points = track.querySelectorAll('.timeline-point');
+
+        const reveal = (el, i) => {
+            if (prefersReducedMotion || !hasAnime) {
+                el.style.opacity = 1;
+                el.style.transform = 'none';
+                return;
+            }
+            anime({
+                targets: el,
+                opacity: [0, 1],
+                translateY: [16, 0],
+                easing: 'easeOutQuad',
+                duration: 500,
+                delay: i * 120
+            });
+        };
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    points.forEach((el, i) => reveal(el, i));
+                    io.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+        io.observe(track);
+    })();
+
+    // ---------- Animated credentials stat strip ----------
+    (function () {
+        const strip = document.getElementById('stat-strip');
+        if (!strip) return;
+        const cards = strip.querySelectorAll('.stat-card');
+        const numbers = strip.querySelectorAll('.stat-number');
+
+        const revealCards = () => {
+            if (prefersReducedMotion || !hasAnime) {
+                cards.forEach(c => { c.style.opacity = 1; c.style.transform = 'none'; });
+            } else {
+                anime({
+                    targets: cards,
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    delay: anime.stagger(100),
+                    duration: 500,
+                    easing: 'easeOutQuad'
+                });
+            }
+        };
+
+        const countUp = () => {
+            numbers.forEach(el => {
+                const target = parseInt(el.dataset.target, 10);
+                const suffix = el.dataset.suffix || '';
+                if (prefersReducedMotion || !hasAnime) {
+                    el.textContent = target + suffix;
+                    return;
+                }
+                const obj = { val: 0 };
+                el.textContent = '0' + suffix;
+                anime({
+                    targets: obj,
+                    val: target,
+                    round: 1,
+                    duration: 1400,
+                    easing: 'easeOutExpo',
+                    update: () => { el.textContent = obj.val + suffix; }
+                });
+            });
+        };
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    revealCards();
+                    countUp();
+                    io.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+        io.observe(strip);
+    })();
+
+    // ---------- D3 coverage map ----------
+    (function () {
+        const svgEl = document.getElementById('coverage-map');
+        if (!svgEl || typeof d3 === 'undefined' || typeof topojson === 'undefined') {
+            showFallback();
+            return;
+        }
+
+        function showFallback() {
+            const fallback = document.getElementById('coverage-grid-fallback');
+            const mapWrap = document.querySelector('.map-wrap');
+            const legend = document.querySelector('.map-legend');
+            if (fallback) fallback.style.display = 'grid';
+            if (mapWrap) mapWrap.style.display = 'none';
+            if (legend) legend.style.display = 'none';
+        }
+
+        // ISO 3166-1 numeric codes.
+        // Note: Fiji/Samoa/Tonga are deliberately excluded from the Pacific
+        // Islands markers — their geometry straddles the antimeridian (180°),
+        // which breaks the map's bounding-box fit. "Pacific Islands" isn't
+        // itemized in the source copy, so PNG/Solomon Islands/Vanuatu stand
+        // in for the region instead.
+        const PRIMARY = new Set([
+            '036', // Australia
+            '554', // New Zealand
+            '392', // Japan
+            '410', // South Korea
+            '598', // Papua New Guinea
+            '090', // Solomon Islands
+            '548'  // Vanuatu
+        ]);
+        const EXTENDED = new Set([
+            '360', '458', '764', '704', '608', '104', '116', '418', '096', '626' // Southeast Asia
+        ]);
+        const NAMES = {
+            '036': 'Australia', '554': 'New Zealand', '392': 'Japan', '410': 'South Korea',
+            '598': 'Papua New Guinea', '090': 'Solomon Islands', '548': 'Vanuatu',
+            '360': 'Indonesia', '458': 'Malaysia', '764': 'Thailand', '704': 'Vietnam',
+            '608': 'Philippines', '104': 'Myanmar', '116': 'Cambodia', '418': 'Laos',
+            '096': 'Brunei', '626': 'Timor-Leste'
+        };
+
+        const svg = d3.select(svgEl);
+        const width = 960, height = 560;
+        const tooltip = document.getElementById('map-tooltip');
+
+        fetch('vendor/countries-110m.json')
+            .then(r => r.json())
+            .then(world => {
+                const countries = topojson.feature(world, world.objects.countries).features;
+                const coverageFeatures = countries.filter(d => PRIMARY.has(d.id) || EXTENDED.has(d.id));
+                const coverageCollection = { type: 'FeatureCollection', features: coverageFeatures };
+
+                const projection = d3.geoMercator();
+                projection.fitExtent([[30, 30], [width - 30, height - 30]], coverageCollection);
+
+                const path = d3.geoPath().projection(projection);
+
+                svg.selectAll('path')
+                    .data(countries)
+                    .enter()
+                    .append('path')
+                    .attr('d', path)
+                    .attr('class', d => {
+                        if (PRIMARY.has(d.id)) return 'country primary';
+                        if (EXTENDED.has(d.id)) return 'country extended';
+                        return 'country';
+                    })
+                    .on('mousemove', (event, d) => {
+                        if (!PRIMARY.has(d.id) && !EXTENDED.has(d.id)) return;
+                        const name = NAMES[d.id] || d.properties.name;
+                        const note = PRIMARY.has(d.id)
+                            ? 'Short notice'
+                            : 'Additional lead time required (visa arrangements)';
+                        tooltip.innerHTML = `<strong>${name}</strong><br>${note}`;
+                        tooltip.style.left = (event.clientX + 16) + 'px';
+                        tooltip.style.top = (event.clientY + 16) + 'px';
+                        tooltip.style.opacity = 1;
+                    })
+                    .on('mouseleave', () => {
+                        tooltip.style.opacity = 0;
+                    });
+            })
+            .catch(err => {
+                console.error('Coverage map data failed to load, showing list fallback:', err);
+                showFallback();
+            });
+    })();
+})();
